@@ -1,0 +1,43 @@
+Sub Auto_Open()
+    On Error Resume Next
+    ActiveSheet.ShowAllData
+End Sub
+
+Sub Clean_Up()
+    'Clean up Extra Data to prevent file from being sluggish
+    Dim cv As CustomView
+    For Each cv In ActiveWorkbook.CustomViews
+        cv.Delete
+    Next cv
+    SharedUserCheck
+End Sub
+
+Sub SharedUserCheck()
+    'Remove old users to speed up shared workbook
+    Dim TimeStart As Date
+    Dim TimeLimit As Date
+    Dim SharedDuration As Date
+    Dim Users As Variant
+    Dim UserCount As Integer
+
+    'Set time limit here in "HH:MM:SS"
+    TimeLimit = TimeValue("02:00:00")
+    Users = ActiveWorkbook.UserStatus
+
+    For UserCount = 1 To UBound(Users)
+        TimeStart = Users(UserCount, 2)
+        SharedDuration = Now - TimeStart
+        If SharedDuration > TimeLimit Then
+            'MsgBox (Users(UserCount, 1) & " has been inactive for " & Application.Text(SharedDuration, "[hh]:mm") & " and will now be removed from the workbook.")
+            ThisWorkbook.RemoveUser (UserCount)
+        End If
+    Next
+End Sub
+
+
+
+Private Sub Worksheet_SelectionChange(ByVal Target As Range)
+
+End Sub
+
+
