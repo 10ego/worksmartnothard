@@ -1,0 +1,20 @@
+Sub Targetdate_sort()
+  ' macro for button to sort by a column
+
+    ActiveSheet.Sort.SortFields.Clear
+    ActiveSheet.Sort.SortFields.Add Key:=Range("F2:F65536") _
+        , SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortNormal
+    With ActiveSheet.Sort
+        .SetRange Range("A1:K65536")
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    ActiveWindow.SmallScroll Down:=51
+    
+    Range("f65536").End(xlUp).Select
+    
+End Sub
+
