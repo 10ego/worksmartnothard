@@ -1,0 +1,77 @@
+Private Sub Workbook_Open()
+    On Error Resume Next
+    ActiveSheet.ShowAllData
+
+    If Not ActiveSheet.AutoFilterMode Then
+        ActiveSheet.Range("A1").AutoFilter
+    End If
+
+
+With ActiveWindow
+    If .FreezePanes Then .FreezePanes = False
+    .SplitColumn = 3
+    .SplitRow = 1
+    .FreezePanes = True
+End With
+    
+End Sub
+Sub Clean_Up()
+    'Clean up Extra Data to prevent file from being sluggish
+    Dim cv As CustomView
+
+    For Each cv In ActiveWorkbook.CustomViews
+        cv.Delete
+    Next cv
+    SharedUserCheck
+End Sub
+
+Sub Freeze_headers()
+    Range("1:1,A:A,B:B,C:C").Select
+    Range("C1").Activate
+    ActiveWindow.FreezePanes = True
+    Range("E3").Select
+End Sub
+
+
+
+Sub SharedUserCheck()
+    'Remove old users to speed up shared workbook
+    Dim TimeStart As Date
+    Dim TimeLimit As Date
+    Dim SharedDuration As Date
+    Dim Users As Variant
+    Dim UserCount As Integer
+
+    'Set time limit here in "HH:MM:SS"
+    TimeLimit = TimeValue("02:00:00")
+    Users = ActiveWorkbook.UserStatus
+
+    For UserCount = 1 To UBound(Users)
+        TimeStart = Users(UserCount, 2)
+        SharedDuration = Now - TimeStart
+        If SharedDuration > TimeLimit Then
+            MsgBox (Users(UserCount, 1) & " has been inactive for " & Application.Text(SharedDuration, "[hh]:mm") & " and will now be removed from the workbook.")
+            ActiveWorkbook.Save
+            ThisWorkbook.RemoveUser (UserCount)
+        End If
+    Next
+End Sub
+Private Sub Workbook_BeforeClose(Cancel As Boolean)
+    'Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
+    'Saves the current file to a backup folder and the default folder
+    'Note that any backup is overwritten
+    If ActiveWorkbook.Path = "Y:\HC\HPFB\TPD\TPD\X_REFERENCE\OPPRS\RPMD\PROJECT MANAGEMENT\BPS_RPMD\Backup\" Then
+        Exit Sub
+    Else
+        Dim backupfolder As String
+        backupfolder = "Y:\HC\HPFB\TPD\TPD\X_REFERENCE\OPPRS\RPMD\PROJECT MANAGEMENT\BPS_RPMD\Backup\"
+        Application.DisplayAlerts = False
+        ActiveWorkbook.SaveCopyAs Filename:=backupfolder & _
+        ActiveWorkbook.Name
+        ActiveWorkbook.Save
+        Application.DisplayAlerts = True
+    End If
+End Sub
+
+
+
