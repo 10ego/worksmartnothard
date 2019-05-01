@@ -60,11 +60,11 @@ Private Sub Workbook_BeforeClose(Cancel As Boolean)
     'Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
     'Saves the current file to a backup folder and the default folder
     'Note that any backup is overwritten
-    If ActiveWorkbook.Path = "Y:\HC\HPFB\TPD\TPD\X_REFERENCE\OPPRS\RPMD\PROJECT MANAGEMENT\BPS_RPMD\Backup\" Then
+    If ActiveWorkbook.Path = FILEPATH Then
         Exit Sub
     Else
         Dim backupfolder As String
-        backupfolder = "Y:\HC\HPFB\TPD\TPD\X_REFERENCE\OPPRS\RPMD\PROJECT MANAGEMENT\BPS_RPMD\Backup\"
+        backupfolder = FILEPATH
         Application.DisplayAlerts = False
         ActiveWorkbook.SaveCopyAs Filename:=backupfolder & _
         ActiveWorkbook.Name
